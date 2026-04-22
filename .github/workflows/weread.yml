@@ -55,6 +55,6 @@ jobs:
         with:
           python-version: "3.9"
       - name: Install dependencies
-        run: pip install notion-client requests
+        run: pip install notion-client==0.9.0 requests
       - name: Send daily review
         run: python scripts/feishu_review.py
