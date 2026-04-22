@@ -1,5 +1,6 @@
 import os
 import random
+import re
 from notion_client import Client
 import requests
 import json
@@ -8,6 +9,18 @@ import json
 notion_token = os.getenv("NOTION_TOKEN")
 database_id = os.getenv("NOTION_DATABASE_ID")
 feishu_webhook = os.getenv("FEISHU_WEBHOOK")
+
+# 提取 Notion ID（支持 URL 格式和纯 ID 格式）
+def extract_page_id(url):
+    if not url:
+        return None
+    match = re.search(r"([a-f0-9]{32}|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})", url)
+    if match:
+        return match.group(0)
+    return None
+
+if database_id:
+    database_id = extract_page_id(database_id)
 
 # 初始化 Notion 客户端
 client = Client(auth=notion_token)
@@ -51,7 +64,6 @@ def extract_note_content(page):
     if "URL" in props:
         url = props["URL"].get("url", "") or ""
 
-    # 提取笔记内容（blocks）
     blocks = []
     block_id = page.get("id")
     try:
