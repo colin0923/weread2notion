@@ -31,6 +31,9 @@ jobs:
       - name: weread sync
         run: |
           python scripts/weread.py
+      - name: feishu review push
+        run: |
+          python scripts/feishu_review.py
       - name: push
         run: |
           git config --local user.email "action@github.com"
