@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.9"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -38,3 +38,23 @@ jobs:
           git add .
           git commit -m 'add new cover' || echo "nothing to commit"
           git push || echo "nothing to push"
+
+  feishu-review:
+    name: Feishu Daily Review
+    runs-on: ubuntu-latest
+    needs: sync
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+      FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install dependencies
+        run: pip install notion-client requests
+      - name: Send daily review
+        run: python scripts/feishu_review.py
