@@ -1,0 +1,29 @@
+name: Feishu Daily Review
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  review:
+    name: Feishu Review
+    runs-on: ubuntu-latest
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+      FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install notion_client requests
+      - name: Feishu review
+        run: |
+          python scripts/feishu_review.py
